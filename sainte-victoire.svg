@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000">
+    <rect x="0" y="0" width="1000" height="1000" style="fill:#eeedeb" transform=""></rect>
+
+    <rect x="80" y="100" width="250" height="250" style="fill:#6b2933" transform="rotate(-23, 80, 100)"></rect> <!--3-->
+    <rect x="580" y="450" width="250" height="250" style="fill:#6b2933" transform="rotate(5, 580, 450)"></rect> <!--6-->
+    <rect x="400" y="600" width="250" height="250" style="fill:#6b2933" transform="rotate(-35, 400, 600)"></rect> <!--7-->
+    <rect x="290" y="40" width="250" height="250" style="fill:#be2a2a;opacity:.95" transform="rotate(-5, 290, 40)"></rect> <!--4-->
+    <rect x="20" y="320" width="250" height="250" style="fill:#be2a2a" transform="rotate(5, 20, 320)"></rect> <!--1-->
+    <rect x="40" y="290" width="250" height="250" style="fill:#e84139" transform="rotate(-45, 40, 290)"></rect> <!--2-->
+    <rect x="420" y="260" width="250" height="250" style="fill:#e84139" transform="rotate(-10, 420, 260)"></rect> <!--5-->
+    <rect x="550" y="840" width="250" height="250" style="fill:#be2a2a" transform="rotate(-50, 550, 840)"></rect> <!--8-->
+    <rect x="775" y="665" width="250" height="250" style="fill:#e52524" transform="rotate(25, 775, 665)"></rect> <!--9-->
+</svg>
