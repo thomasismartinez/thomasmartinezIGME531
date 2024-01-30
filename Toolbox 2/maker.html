@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<head>
+    <title>(Des)Ordres</title>
+    <!--script src="/sainte-victoire.js" type="module"></script-->
+</head>
+<body>
+    <figure id="original"></figure>
+    <figure id="variant"></figure>
+    <script>
+        const drawRect = (x,y,w,h,style,transform='') => {
+            return `<rect x="${x}" y="${y}" width="${w}" height="${h}" style="${style}" transform="${transform}" />`
+        }
+
+        const drawCircle = (x,y,r,stroke,strokeWidth,fill) => {
+            return `<circle cx="${x}" cy="${y}" r="${r}" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" />`
+        }
+
+        const drawEllipse = (cx,cy,rx,ry,style) => {
+            return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" style="${style}" />`
+        }
+
+        const drawPolygon = (points, style) => {
+            return `<polygon points="${points}" style="${style}" />`
+        }
+
+        const drawPolyline = (points, style, transform) => {
+            return `<polyline points="${points}" style="${style}"" transform="${transform}" />`
+        }
+
+        const drawLine = (x1,y1,x2,y2,style) => {
+            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="${style}" />`
+        }
+
+        // takes paths as list of strings for ex: ['M 10 80', 'Q 95 10 180 80']
+        const drawPath = (paths,style) => {
+            const stringifyPaths = () => {
+                let str = '';
+                console.log(str);
+                paths.forEach(path => {
+                    str = str.concat(path + " ");
+                })
+                return str;
+            }
+            return `<path d="${stringifyPaths()}" style=${style} />`
+        }
+
+        const createGroup = (shapes, transform='') => {
+            console.log(shapes);
+            let shapesStr = '';
+            shapes.forEach(shape => {
+                shapesStr = shapesStr.concat(shape);
+                console.log(shapesStr);
+            });
+            console.log(`<g transform='${transform}'>${shapesStr}</g>`);
+            return `<g transform='${transform}'>${shapesStr}</g>`;
+        }
+
+        const createDesOrdresGroup = (x, y) => {
+            console.log('entering createDesOrdresGroup');
+            let squares = [];
+            let randomCount = Math.floor(Math.random() * 15) + 5;
+            //console.log(randomCount);
+            for (let i = 0; i < randomCount; i++) {
+                //console.log('createDesOrdresGroup looping ' + i);
+                let startEndPoint = `${x},${y}`;
+                let randomSize = Math.floor(Math.random() * 100) + 5;
+                const randMod = () => {
+                    return Math.floor(Math.random() * 8) -4;
+                }
+                squares.push(
+                    drawPolyline(`${startEndPoint} 
+                    ${x+randomSize+randMod()},${y+randMod()} ${x+randomSize+randMod()},${y+randomSize+randMod()} ${x+randMod()},${y+randomSize+randMod()} ${startEndPoint}`
+                    , 'fill: none; stroke: #2f2319; stroke-width: 2;'
+                    , `translate(${randomSize/-2} ${randomSize/-2})`)
+                );
+            }
+
+            return createGroup(squares);
+        }
+
+        const drawDesOrdresOriginal = () => {
+            console.log('entering drawDesOrdresOriginal');
+            let desOrdres = '';
+            for (let x = 100; x <= 1700; x += 100) {
+                //console.log('x looping' + x)
+                for (let y = 100; y <= 1700; y += 100) {
+                    //console.log('y looping' + y)
+                    desOrdres = desOrdres.concat(createDesOrdresGroup(x,y));
+                }
+            }
+            return desOrdres;
+        }
+
+        const drawDesOrdresVariantLine = () => {
+            console.log('entering drawDesOrdresVariantLine');
+            let variantPoints = '';
+            for (let i = 0; i < 20; i++) {
+                console.log(i);
+                let randX = (Math.floor(Math.random() * 17) + 1) * 100;
+                let randY = (Math.floor(Math.random() * 17) + 1) * 100;
+                console.log(`${randX},${randY}`);
+                variantPoints = variantPoints.concat(`${randX},${randY} `);
+            }
+            return drawPolygon(variantPoints, 'fill: #c84a11; stroke: none; stroke-width: 6;')
+        }
+
+        const drawDesOrdreses = () => {
+            // original
+            document.getElementById('original').innerHTML =
+                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1800" width="1000">
+                    ${drawRect(0,0,1800,1800,'fill:#f3eee3')}
+                    ${drawDesOrdresOriginal()}
+                </svg>`;
+
+            
+            // variant
+            document.getElementById('variant').innerHTML =
+                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1800" width="1000">
+                    ${drawRect(0,0,1800,1800,'fill:#f3eee3')}
+                    ${drawDesOrdresVariantLine()}
+                    ${drawDesOrdresOriginal()}
+                </svg>`;
+            
+            //window.requestAnimationFrame(drawDesOrdreses);
+            
+        }
+
+        window.onload = drawDesOrdreses;
+
+    </script>
+</body>
