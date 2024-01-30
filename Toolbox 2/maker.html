@@ -4,8 +4,8 @@
     <!--script src="/sainte-victoire.js" type="module"></script-->
 </head>
 <body>
-    <figure id="original"></figure>
-    <figure id="variant"></figure>
+    <span id="original"></span>
+    <span id="variant"></span>
     <script>
         const drawRect = (x,y,w,h,style,transform='') => {
             return `<rect x="${x}" y="${y}" width="${w}" height="${h}" style="${style}" transform="${transform}" />`
@@ -24,7 +24,7 @@
         }
 
         const drawPolyline = (points, style, transform) => {
-            return `<polyline points="${points}" style="${style}"" transform="${transform}" />`
+            return `<polyline points="${points}" style="${style}" transform="${transform}" />`
         }
 
         const drawLine = (x1,y1,x2,y2,style) => {
@@ -44,14 +44,13 @@
             return `<path d="${stringifyPaths()}" style=${style} />`
         }
 
-        const createGroup = (shapes, transform='') => {
+        const createGroup = (shapes, transform) => {
             console.log(shapes);
             let shapesStr = '';
             shapes.forEach(shape => {
                 shapesStr = shapesStr.concat(shape);
                 console.log(shapesStr);
             });
-            console.log(`<g transform='${transform}'>${shapesStr}</g>`);
             return `<g transform='${transform}'>${shapesStr}</g>`;
         }
 
@@ -121,11 +120,26 @@
                     ${drawDesOrdresOriginal()}
                 </svg>`;
             
-            //window.requestAnimationFrame(drawDesOrdreses);
+            window.requestAnimationFrame(drawDesOrdreses);
             
         }
 
         window.onload = drawDesOrdreses;
 
+        const makeSVG = (myElem) => {
+            switch (myElem.type) {
+                case 'rect': {
+                    const {width, height} = myElem.properties;
+                    return `<rect width="${width}"`
+                }
+                case 'group': {
+
+                }
+                case 'rotate': {
+
+                }
+            }
+        }
+        
     </script>
 </body>
