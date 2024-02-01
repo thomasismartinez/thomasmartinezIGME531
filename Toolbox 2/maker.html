@@ -77,12 +77,12 @@
             return createGroup(squares);
         }
 
-        const drawDesOrdresOriginal = () => {
+        const drawDesOrdresOriginal = (xCount,yCount) => {
             console.log('entering drawDesOrdresOriginal');
             let desOrdres = '';
-            for (let x = 100; x <= 1700; x += 100) {
+            for (let x = 100; x <= xCount*100; x += 100) {
                 //console.log('x looping' + x)
-                for (let y = 100; y <= 1700; y += 100) {
+                for (let y = 100; y <= yCount*100; y += 100) {
                     //console.log('y looping' + y)
                     desOrdres = desOrdres.concat(createDesOrdresGroup(x,y));
                 }
@@ -90,53 +90,65 @@
             return desOrdres;
         }
 
-        const drawDesOrdresVariantLine = () => {
+        const drawDesOrdresVariantLine = (w,h) => {
             console.log('entering drawDesOrdresVariantLine');
             let variantPoints = '';
             for (let i = 0; i < 20; i++) {
                 console.log(i);
-                let randX = (Math.floor(Math.random() * 17) + 1) * 100;
-                let randY = (Math.floor(Math.random() * 17) + 1) * 100;
+                let randX = (Math.floor(Math.random() * w) + 1) * 100;
+                let randY = (Math.floor(Math.random() * h) + 1) * 100;
                 console.log(`${randX},${randY}`);
                 variantPoints = variantPoints.concat(`${randX},${randY} `);
             }
             return drawPolygon(variantPoints, 'fill: #c84a11; stroke: none; stroke-width: 6;')
         }
 
-        const drawDesOrdreses = () => {
+        const drawDesOrdreses = (x,y) => {
             // original
             document.getElementById('original').innerHTML =
-                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1800" width="1000">
+                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${(x+1)*100} ${(y+1)*100}" width="1000">
                     ${drawRect(0,0,1800,1800,'fill:#f3eee3')}
-                    ${drawDesOrdresOriginal()}
+                    ${drawDesOrdresOriginal(x,y)}
                 </svg>`;
 
             
             // variant
             document.getElementById('variant').innerHTML =
-                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1800" width="1000">
+                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${(x+1)*100} ${(y+1)*100}" width="1000">
                     ${drawRect(0,0,1800,1800,'fill:#f3eee3')}
-                    ${drawDesOrdresVariantLine()}
-                    ${drawDesOrdresOriginal()}
+                    ${drawDesOrdresVariantLine(x,y)}
+                    ${drawDesOrdresOriginal(x,y)}
                 </svg>`;
             
-            window.requestAnimationFrame(drawDesOrdreses);
+            //window.requestAnimationFrame(drawDesOrdreses);
             
         }
 
-        window.onload = drawDesOrdreses;
+        let xDim = 17;
+        let yDim = 17;
+
+        window.onload = () => {drawDesOrdreses(xDim,yDim)};
 
         const makeSVG = (myElem) => {
             switch (myElem.type) {
                 case 'rect': {
                     const {width, height} = myElem.properties;
-                    return `<rect width="${width}"`
+                    return `<rect width="${width}" height="${height}" />`;
                 }
                 case 'group': {
-
+                    return `
+                        <g>
+                            ${elems.map(makeSVG).join('\n')}
+                        </g>
+                    `
                 }
                 case 'rotate': {
-
+                    const degrees = myElem.degrees;
+                    return `
+                        <g transform="rotate(${degrees})">
+                            ${makeSVG(myElem.elements)}
+                        </g>
+                    `
                 }
             }
         }
