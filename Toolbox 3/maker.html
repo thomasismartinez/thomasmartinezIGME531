@@ -54,80 +54,69 @@
             return `<g transform='${transform}'>${shapesStr}</g>`;
         }
 
-        const createDesOrdresGroup = (x, y) => {
-            console.log('entering createDesOrdresGroup');
-            let squares = [];
-            let randomCount = Math.floor(Math.random() * 15) + 5;
-            //console.log(randomCount);
-            for (let i = 0; i < randomCount; i++) {
-                //console.log('createDesOrdresGroup looping ' + i);
-                let startEndPoint = `${x},${y}`;
-                let randomSize = Math.floor(Math.random() * 100) + 5;
-                const randMod = () => {
-                    return Math.floor(Math.random() * 8) -4;
-                }
-                squares.push(
-                    drawPolyline(`${startEndPoint} 
-                    ${x+randomSize+randMod()},${y+randMod()} ${x+randomSize+randMod()},${y+randomSize+randMod()} ${x+randMod()},${y+randomSize+randMod()} ${startEndPoint}`
-                    , 'fill: none; stroke: #2f2319; stroke-width: 2;'
-                    , `translate(${randomSize/-2} ${randomSize/-2})`)
-                );
-            }
-
-            return createGroup(squares);
-        }
-
-        const drawDesOrdresOriginal = (xCount,yCount) => {
-            console.log('entering drawDesOrdresOriginal');
-            let desOrdres = '';
-            for (let x = 100; x <= xCount*100; x += 100) {
+        const drawSchotterOriginal = (xCount,yCount) => {
+            console.log('entering drawSchotterOriginal');
+            let schotter = '';
+            for (let x = 1; x <= xCount; x++) {
                 //console.log('x looping' + x)
-                for (let y = 100; y <= yCount*100; y += 100) {
-                    //console.log('y looping' + y)
-                    desOrdres = desOrdres.concat(createDesOrdresGroup(x,y));
+                for (let y = 1; y <= yCount; y++) {
+                    let Y = y*3;
+                    let randTranslateX = Math.floor(Math.random() * Y) - (Y/2);
+                    let randTranslateY = Math.floor(Math.random() * Y) - (Y/2);
+                    let randRotate = Math.floor(Math.random() * Y) - (Y/2);
+                    schotter = schotter.concat(
+                        drawRect(x*100,y*100,100,100,'fill: none; stroke: black; stroke-width: 4;'
+                            , `translate(${-50+randTranslateX} ${-50+randTranslateY}), rotate(${randRotate} ${(x*100)+50} ${(y*100)+50})`)
+                    );
                 }
             }
-            return desOrdres;
+            return schotter;
         }
 
-        const drawDesOrdresVariantLine = (w,h) => {
-            console.log('entering drawDesOrdresVariantLine');
-            let variantPoints = '';
-            for (let i = 0; i < 20; i++) {
-                console.log(i);
-                let randX = (Math.floor(Math.random() * w) + 1) * 100;
-                let randY = (Math.floor(Math.random() * h) + 1) * 100;
-                console.log(`${randX},${randY}`);
-                variantPoints = variantPoints.concat(`${randX},${randY} `);
+        const drawSchotterVariant = (xCount,yCount) => {
+            console.log('entering drawSchotterVariant');
+            let schotter = '';
+            for (let x = 1; x <= xCount; x++) {
+                //console.log('x looping' + x)
+                for (let y = 1; y <= yCount; y++) {
+                    let Y = y*3;
+                    let randTranslateX = (Math.floor(Math.random() * Y) - (Y/2));
+                    let randTranslateY = (Math.floor(Math.random() * Y) - (Y/2));
+                    let randRotate = (Math.floor(Math.random() * Y) - (Y/2));
+                    let randRedMod = ((Math.floor(Math.random() * yCount) / 100) * y) * 255;
+                    let randGreenMod = ((Math.floor(Math.random() * yCount) / 100) * y) * 255;
+                    let randBlueMod = ((Math.floor(Math.random() * yCount) / 100) * y) * 255;
+                    let randAlphaMod = 1 - (((Math.floor(Math.random() * yCount) / 100) * y) * .2);
+                    schotter = schotter.concat(
+                        drawRect(x*100,y*100,100,100,`fill: none; stroke: rgba(${randRedMod},${randGreenMod},${randBlueMod},${randAlphaMod}); stroke-width: 4;`
+                            , `translate(${-50+randTranslateX} ${-50+randTranslateY}), rotate(${randRotate} ${(x*100)+50} ${(y*100)+50})`)
+                    );
+                }
             }
-            return drawPolygon(variantPoints, 'fill: #c84a11; stroke: none; stroke-width: 6;')
+            return schotter;
         }
 
-        const drawDesOrdreses = (x,y) => {
+        const createSchotter = (x,y) => {
             // original
             document.getElementById('original').innerHTML =
                 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${(x+1)*100} ${(y+1)*100}" width="1000">
-                    ${drawRect(0,0,1800,1800,'fill:#f3eee3')}
-                    ${drawDesOrdresOriginal(x,y)}
+                    ${drawSchotterOriginal(x,y)}
                 </svg>`;
 
             
             // variant
             document.getElementById('variant').innerHTML =
                 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${(x+1)*100} ${(y+1)*100}" width="1000">
-                    ${drawRect(0,0,1800,1800,'fill:#f3eee3')}
-                    ${drawDesOrdresVariantLine(x,y)}
-                    ${drawDesOrdresOriginal(x,y)}
+                    ${drawSchotterVariant(x,y)}
                 </svg>`;
             
             //window.requestAnimationFrame(drawDesOrdreses);
-            
         }
 
-        let xDim = 17;
-        let yDim = 17;
+        let xDim = 12;
+        let yDim = 21;
 
-        window.onload = () => {drawDesOrdreses(xDim,yDim)};
+        window.onload = () => {createSchotter(xDim,yDim)};
 
         const makeSVG = (myElem) => {
             switch (myElem.type) {
