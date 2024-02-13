@@ -1,8 +1,8 @@
 import * as helper from './svg-helper.js';
 import * as perl from './perlin.js';
 
-const xDim = 35;
-const yDim = 35;
+const xDim = 45;
+const yDim = 45;
 
 let perlin;
 
@@ -30,8 +30,8 @@ const drawInterruptionsVariant = (xCount,yCount) => {
     for (let y = 0; y < yCount; y++) {
         for (let x = 0; x < xCount; x++) {
             //let randRotate = Math.floor(Math.random() * 360);
-            let orientation = ((y+x) / xCount+yCount) * 720;
-            let randSkew = Math.floor(Math.random() * 50) - 25;
+            let orientation = ((y+x) / xCount+yCount) * 360;
+            let randSkew = 0//Math.floor(Math.random() * 50) - 25;
             let randRotate = orientation + randSkew;
             //let hue = Math.floor(Math.random() * 250);
             let hue = ((y+x) / xCount+yCount) * 250;
@@ -46,7 +46,7 @@ const drawInterruptionsVariant = (xCount,yCount) => {
                 helper.rotate(
                     X+50, Y+50,
                     randRotate,
-                    helper.drawLine(X,Y,X+100,Y+100,`fill: none; stroke: hsl(${hue}, 50%, 50%); stroke-width: 6;`),
+                    helper.drawLine(X,Y,X+100,Y+100,`fill: none; stroke: hsl(${hue}, 50%, 50%); stroke-width: 10;`),
                     //helper.drawLine(X,Y,X+100,Y+100,`fill: none; stroke: black; stroke-width: 6;`),
                 )
             );
