@@ -2,8 +2,8 @@ export const drawRect = (x,y,w,h,style,transform='') => {
     return `<rect x="${x}" y="${y}" width="${w}" height="${h}" style="${style}" transform="${transform}" />`
 }
 
-export const drawCircle = (x,y,r,stroke,strokeWidth,fill) => {
-    return `<circle cx="${x}" cy="${y}" r="${r}" stroke="${stroke}" stroke-width="${strokeWidth}" fill="${fill}" />`
+export const drawCircle = (x,y,r,style) => {
+    return `<circle cx="${x}" cy="${y}" r="${r}" style="${style}" />`
 }
 
 export const drawEllipse = (cx,cy,rx,ry,style) => {
@@ -36,11 +36,11 @@ export const drawPath = (paths,style) => {
 }
 
 export const groupShapes = (shapes) => {
-    console.log(shapes);
+    //console.log(shapes);
     let shapesStr = '';
     shapes.forEach(shape => {
         shapesStr = shapesStr.concat(shape);
-        console.log(shapesStr);
+        //console.log(shapesStr);
     });
     return `<g>${shapesStr}</g>`;
 }
