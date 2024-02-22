@@ -6,36 +6,20 @@ const yDim = 10;
 const bigStyle = 'fill:none;stroke:red;stroke-width:6;';
 const smallStyle = 'fill:none;stroke:black;stroke-width:6';
 const triangleStyleA = 'fill:skyblue;stroke:none;';
-const triangleStyleB = 'fill:none;stroke:none;';
+const triangleStyleB = 'fill:white;stroke:none;';
 
 const init = () => {
     createSVGs(xDim,yDim);
 }
 
-const drawTile = (x,y,w,h) => {
-    let rotate = (Math.floor(Math.random() * 4) + 1) * 90;
-    console.log(rotate);
-    return helper.translate( x, y, 
-        helper.rotate( 50, 50, rotate,
-            helper.groupShapes([
-                //M0 0-70 70A99 99 0 0 1-70-70
-                //helper.drawRect(0,0, 100, 100, 'fill:none;stroke:rgba(10,10,10,0.1);'),
-
-                // small lines
-                helper.drawPath(['M 0 75', 'Q 25 75 25 0'], 'fill:none;stroke:green;stroke-width:4'),
-                //M 0 25 C 42 28 61 46 46 53 C 42 54 37 46 46 38 C 64 26 75 10 75 0
-                helper.drawPath(['M 0 25', 'C 42 25 61 46 46 53', 'C 42 54 37 46 46 38', 'C 64 26 75 10 75 0'], smallStyle),
-                //M 25 100 C 25 75 37 67 43 67 C 49 67 51 78 54 78 C 57 78 57 71 60 71 C 61 71 62 72 64 72 C 68 72 70 59 76 59 C 78 59 81 62 84 69 C 87 74 89 75 100 75
-                helper.drawPath(['M 25 100', 'C 25 75 37 67 43 67', 'C 49 67 51 78 54 78', 'C 57 78 57 71 60 71', 'C 61 71 62 72 64 72', 'C 68 72 70 59 76 59', 'C 78 59 81 62 84 69', 'C 87 74 89 75 100 75'], smallStyle),
-                //M 100 25 C 92 25 89 28 89 33 C 89 40 91 43 91 50 C 91 66 74 79 75 100
-                helper.drawPath(['M 100 25', 'C 92 25 89 28 89 33', 'C 89 40 91 43 91 50', 'C 91 66 74 79 75 100'], smallStyle),
-
-                // big lines
-                helper.drawPath(['M 0 50', 'C 25 50 50 75 50 100'], bigStyle),
-                helper.drawPath(['M 50 0', 'C 50 25 75 50 100 50'], bigStyle),
-            ]) 
-        )
-    )
+const hatchFillTriangle = () => {
+    const hatchStroke = 'fill:none;stroke:skyblue;stroke-width:2';
+    let hatches = [];
+    for (let i = 0; i <= 100; i++) {
+        hatches.push(helper.drawLine(0,i,i,0,hatchStroke));
+        //console.log(`(0,${i}) to (${i},0)`);
+    }
+    return helper.groupShapes(hatches);
 }
 
 const drawTriangleTile = (x,y,w,h) => {
@@ -50,7 +34,8 @@ const drawTriangleTile = (x,y,w,h) => {
 
 const drawTriangleA = (w,h) => {
     let tile = '';
-    tile = tile.concat(helper.drawPolygon(`0,${h} ${w},0 0,0`,triangleStyleA));
+    //tile = tile.concat(helper.drawPolygon(`0,${h} ${w},0 0,0`,triangleStyleA));
+    tile = tile.concat(hatchFillTriangle());
 
     let randomTileNumber = Math.floor(Math.random() * 100);
 
