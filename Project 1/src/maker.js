@@ -4,8 +4,8 @@ const xDim = 10;
 const yDim = 10;
 
 const bigStyle = 'fill:none;stroke:red;stroke-width:6;';
-const smallStyle = 'fill:black;stroke:black;stroke-width:5';
-const triangleStyleA = 'fill:none;stroke:skyblue;';
+const smallStyle = 'fill:none;stroke:black;stroke-width:6';
+const triangleStyleA = 'fill:skyblue;stroke:none;';
 const triangleStyleB = 'fill:none;stroke:none;';
 
 const init = () => {
