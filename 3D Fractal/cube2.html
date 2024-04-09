@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Demo Application</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #render {
+            width: 90vmin;
+            height: 90vmin;
+            margin: auto;
+            outline: 1px solid black;
+            
+        }
+
+        div:has(#render) {
+            width: 100%;
+            height: 100vh;
+            min-height: 100vh;
+            max-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        button {         
+            font-size: 1.25em;
+            width: fit-content;
+            height: fit-content;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+    </style>
+</code_to_rewrite>
+</head>
+
+<body>
+    <script src="https://unpkg.com/@jscad/modeling" id="MODELING"></script>
+    <script src="https://unpkg.com/@jscad/regl-renderer"></script>
+
+    <div>
+        <div id="render"></div>
+    </div>
+
+    <script type="module" language="javascript">
+        import { render } from './render.js';
+
+        const { booleans, colors, primitives, transforms, extrusions,utils } = jscadModeling // modeling comes from the included MODELING library
+
+        const { intersect, subtract, union } = booleans
+        const { colorize, colorNameToRgb } = colors
+        const { cube, sphere, circle } = primitives
+        const { translate, rotate } = transforms
+        const { extrudeLinear } = extrusions
+        const { degToRad } = utils
+
+        const randPosNeg = () => {
+            const rand = Math.round(Math.random());
+
+            if (rand) return -1
+            else return 1
+        }
+
+        const recurse = (parameters, recursions) => {
+            const size = parameters.size;
+            const old = parameters.oldTranslate;
+            const rad = size/2;
+            const corners = parameters.corners;
+            const newTranslation = [old[0] + (rad*corners[0]),old[1] + (rad*corners[1]),old[2] + (rad*corners[2])];
+            console.log(newTranslation);
+
+            const cornerSphere = sphere({ radius: 5, segments: 20 });
+
+            const meshCube = union(
+                //cornerSphere,
+
+                translate([rad,rad,-rad], rotate([0,0,0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+                translate([-rad,rad,-rad], rotate([0,0,0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+                translate([rad,-rad,-rad], rotate([0,0,0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+                translate([-rad,-rad,-rad], rotate([0,0,0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+
+                translate([-rad,rad,rad], rotate([0,degToRad(90),0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+                translate([rad,rad,-rad], rotate([degToRad(90),0,0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+                translate([-rad,rad,-rad], rotate([degToRad(90),0,0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+                translate([-rad,-rad,-rad], rotate([0,degToRad(90),0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+
+                translate([rad,rad,rad], rotate([degToRad(90),0,0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+                translate([-rad,rad,rad], rotate([degToRad(90),0,0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+                translate([-rad,-rad,rad], rotate([0,degToRad(90),0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+                translate([-rad,rad,-rad], rotate([0,degToRad(90),0], extrudeLinear({height: size}, circle({radius: 5}) ) ) ),
+
+                translate([rad,rad,rad],cornerSphere),
+                translate([-rad,rad,rad],cornerSphere),
+                translate([rad,-rad,rad],cornerSphere),
+                translate([-rad,-rad,rad],cornerSphere),
+                translate([rad,rad,-rad],cornerSphere),
+                translate([-rad,rad,-rad],cornerSphere),
+                translate([rad,-rad,-rad],cornerSphere),
+                translate([-rad,-rad,-rad],cornerSphere),
+            )
+
+            const newCube = translate(
+                newTranslation,
+                meshCube
+            )
+
+            if (recursions === 0) {
+                return [
+                    colorize(colorNameToRgb('orange'), newCube),
+                ];
+            }
+            else {
+                let u = union(
+                    recurse(parameters, 0),
+                    recurse({size: parameters.size * 0.5, corners: [randPosNeg(),randPosNeg(),randPosNeg()], oldTranslate: newTranslation }, recursions - 1),
+                    recurse({size: parameters.size * 0.5, corners: [randPosNeg(),randPosNeg(),randPosNeg()], oldTranslate: newTranslation }, recursions - 1),
+                    recurse({size: parameters.size * 0.5, corners: [randPosNeg(),randPosNeg(),randPosNeg()], oldTranslate: newTranslation }, recursions - 1)
+                )
+                return u;
+            }
+        }
+
+        render(document.getElementById("render"), recurse({ size: 300, corners: [0,0,0], oldTranslate: [0,0,0]}, 3))
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>3D Fractal</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #render {
+            width: 90vmin;
+            height: 90vmin;
+            margin: auto;
+            outline: 1px solid black;
+            
+        }
+
+        div:has(#render) {
+            width: 100%;
+            height: 100vh;
+            min-height: 100vh;
+            max-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        button {         
+            font-size: 1.25em;
+            width: fit-content;
+            height: fit-content;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+    </style>
+</code_to_rewrite>
+</head>
+
+<body>
+    <script src="https://unpkg.com/@jscad/modeling" id="MODELING"></script>
+    <script src="https://unpkg.com/@jscad/regl-renderer"></script>
+
+    <div>
+        <div id="render"></div>
+    </div>
+
+    <script type="module" language="javascript">
+        // https://openjscad.xyz/docs/
+        import { render } from './render.js';
+
+        const { booleans, colors, primitives, transforms, extrusions, utils } = jscadModeling // modeling comes from the included MODELING library
+
+        const { intersect, subtract, union } = booleans
+        const { colorize, colorNameToRgb } = colors
+        const { cube, sphere, cylinder, circle } = primitives
+        const { rotate, translateX, translateY, translateZ } = transforms
+        const { extrudeLinear } =  extrusions
+        const { degToRad } = utils
+
+        const demo = (parameters,recursions=0) => {
+            const size = parameters.size;
+
+            const fourHoles = union(
+                translateZ(size/2, cylinder({height: size/2, radius: 1/3 * size})),
+                rotate([0, degToRad(120), 0], translateZ(size/2, cylinder({height: size / 2, radius: size * .4}))),
+                rotate([0, degToRad(120), degToRad(120)], translateZ(size/2, cylinder({height: size/2, radius: size * .4}))),
+                rotate([0, degToRad(120), degToRad(240)], translateZ(size/2, cylinder({height: size/2, radius: size * .4})))
+            )
+
+            const fourHolesBetter = union(
+                extrudeLinear({height: size}, circle({radius: size * .35})),
+                rotate([0, degToRad(110), 0], extrudeLinear({height: size}, circle({radius: size * .35}))),
+                rotate([0, degToRad(110), degToRad(120)], extrudeLinear({height: size}, circle({radius: size * .35}))),
+                rotate([0, degToRad(110), degToRad(240)], extrudeLinear({height: size}, circle({radius: size * .35})))
+            )
+
+            const fourHolesAlt = union(
+                extrudeLinear({height: size}, circle({radius: size * .15})),
+                rotate([0, degToRad(110), 0], extrudeLinear({height: size}, circle({radius: size * .15}))),
+                rotate([0, degToRad(110), degToRad(120)], extrudeLinear({height: size}, circle({radius: size * .15}))),
+                rotate([0, degToRad(110), degToRad(240)], extrudeLinear({height: size}, circle({radius: size * .15})))
+            )
+
+            const sixHoles = union(
+                cylinder({height: size, radius: size * .3}),
+                rotate([(Math.PI / 2), 0, 0], cylinder({height: size, radius: size * .3})),
+                rotate([0, (Math.PI / 2), 0], cylinder({height: size, radius: size * .3}))
+            )
+
+            if (recursions === 0) {
+                const shell = 
+                    rotate([Math.PI * Math.random(), Math.PI * Math.random(), Math.PI * Math.random()],
+                        subtract(
+                            sphere({ radius: 1/2 * size, segments: 50 }),
+                            union(
+                                sphere({ radius: 1/2 * size * .9, segments: 20 }),
+                                fourHolesBetter,
+                                rotate(
+                                    [0,degToRad(180),0],
+                                    fourHolesAlt
+                                )
+                            )
+                        )
+                ) // end rotate
+                
+                
+                return [
+                    colorize(colorNameToRgb('orange'), shell),
+                ];
+            }
+            else {
+                let u = union(
+                    demo(parameters, 0),
+                    demo({size: parameters.size * 0.9}, recursions - 1)
+                )
+                return u;
+            }
+        }
+
+        const test = (parameters,recursions=0) => {
+            const size = parameters.size;
+            return union(
+                sphere({ radius: 1/2 * size * .9, segments: 20 }),
+                extrudeLinear({height: size}, circle({radius: size * .35})),
+                rotate([0, degToRad(110), 0], extrudeLinear({height: size}, circle({radius: size * .35}))),
+                rotate([0, degToRad(110), degToRad(120)], extrudeLinear({height: size}, circle({radius: size * .35}))),
+                rotate([0, degToRad(110), degToRad(240)], extrudeLinear({height: size}, circle({radius: size * .35}))),
+                rotate(
+                    [0, degToRad(180), 0],
+                    union(
+                    extrudeLinear({height: size}, circle({radius: size * .1})),
+                    rotate([0, degToRad(110), 0], extrudeLinear({height: size}, circle({radius: size * .1}))),
+                    rotate([0, degToRad(110), degToRad(120)], extrudeLinear({height: size}, circle({radius: size * .1}))),
+                    rotate([0, degToRad(110), degToRad(240)], extrudeLinear({height: size}, circle({radius: size * .1})))
+                    )
+                )
+            )
+        }
+
+        render(document.getElementById("render"), demo({ size: 300 }, 9))
+
+    </script>
+</body>
+
+</html>
